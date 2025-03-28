@@ -1,40 +1,87 @@
 import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
+from PIL import Image
+import importlib
 
-# Konfigurasi layout
-st.set_page_config(page_title="Aplikasi Streamlit Sederhana", layout="wide")
+st.set_page_config(page_title="Bombatronic", page_icon="🔥", layout="wide")
 
-# Judul aplikasi
-st.title("Aplikasi Streamlit Sederhana")
+logo = Image.open("assets/logo.png")
 
-# Sidebar untuk navigasi
-st.sidebar.header("Navigasi")
-page = st.sidebar.selectbox("Pilih Halaman", ["Beranda", "Visualisasi", "Tentang"])
+# Konfigurasi menu navigasi
+menu = {
+    "📊 Dashboard": "dashboard",
+    "💬 Chatbot": "chatbot",
+    "📷 Camera": "camera",
+    "ℹ️ About": "about"
+}
 
-if page == "Beranda":
-    st.header("Selamat Datang!")
-    user_input = st.text_input("Masukkan nama Anda:")
-    if st.button("Submit"):
-        st.success(f"Halo, {user_input}!")
+# Baca halaman dari query params
+query_params = st.query_params
+current_page = query_params.get("page", "dashboard")
 
-    number = st.slider("Pilih angka:", 1, 100, 50)
-    st.write(f"Angka yang dipilih: {number}")
+def switch_page(page):
+    st.query_params.update(page=page)
+    st.rerun()  
 
-    if st.checkbox("Tampilkan gambar"):
-        st.image("https://via.placeholder.com/150", caption="Contoh Gambar")
+with st.sidebar:
+    st.image(logo, use_container_width=True)
+    st.markdown("<h1 style='text-align: center; color: white; font-size: 30px;'>Bombatronic</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 12px; color: white;'>presented by SymbIoT</p>", unsafe_allow_html=True)
+    st.markdown("---")
 
-elif page == "Visualisasi":
-    st.header("Visualisasi Data")
-    data = pd.DataFrame({
-        "Kategori": ["A", "B", "C", "D"],
-        "Nilai": [10, 20, 30, 40]
-    })
+    st.markdown("""
+        <style>
 
-    fig, ax = plt.subplots()
-    ax.bar(data["Kategori"], data["Nilai"], color='skyblue')
-    st.pyplot(fig)
+            /* Warna background utama */
+            body, [data-testid="stAppViewContainer"] {
+                background-color: #ffffff;  /* Warna utama */
+                color: black;  /* Warna teks */
+            }
 
-elif page == "Tentang":
-    st.header("Tentang Aplikasi")
-    st.write("Aplikasi ini dibuat dengan Streamlit untuk demonstrasi UI yang sederhana dan interaktif.")
+            /* Warna sidebar */
+            [data-testid="stSidebar"] {
+                background-color: #244475 !important;  /* Warna sidebar */
+                color :white;
+            }
+            
+            [data-testid="stSidebar"] image {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+            } 
+            
+            /* Mengubah tampilan button navigasi di sidebar */
+            [data-testid="stSidebar"] button {
+                background-color: transparent !important;
+                color: white !important;
+                border: none !important;
+                padding: 10px !important;
+                font-weight: bold !important;
+                text-align: left !important;
+                width: 100% !important;
+            }
+
+            /* Hover effect */
+            [data-testid="stSidebar"] button:hover {
+                background-color: #1e3a5f !important; /* Warna hover */
+            }
+
+            /* Tombol aktif */
+            [data-testid="stSidebar"] button:focus {
+                background-color: #1b2e4b !important; /* Warna untuk tombol aktif */
+            }
+
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Tampilkan menu sidebar dengan status aktif
+    for label, page in menu.items():
+        button_class = "active" if current_page == page else ""
+        if st.button(label, key=page, use_container_width=True):
+            switch_page(page)  # Navigasi langsung saat diklik
+
+# Load halaman berdasarkan query params
+try:
+    module = importlib.import_module(f"modules.{current_page}")
+    module.run()  # Jalankan fungsi `run()` di masing-masing file
+except ModuleNotFoundError:
+    st.error("Halaman tidak ditemukan!")
