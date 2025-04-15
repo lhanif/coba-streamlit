@@ -4,7 +4,7 @@ import pandas as pd
 
 def run():
     # Konfigurasi halaman
-    st.markdown("<h1 style='text-align: center;'>Hello, Welcome to Our Dashboard 👋</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>DASHBOARD BOMBATRONIC</h1>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # **1️⃣ Status & Threat Level**
@@ -23,7 +23,7 @@ def run():
 
     # Dummy data
     x = [1, 2, 3, 4, 5]
-    y1 = [100, 200, 300, 400, 350]  # CO
+    y1 = [100, 200, 300, 400, 350]  # CO  
     y2 = [50, 150, 250, 350, 450]  # CO2
     y3 = [33, 35, 37, 36, 39]  # Temperature
     y4 = [90, 70, 80, 100, 60]  # Humidity

@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 
 def run():
-    st.title("🤖 Chatbot Gemini")
+    st.title("🤖 Chatbot")
 
     # Tambahkan style untuk jawaban chatbot
     st.markdown("""
