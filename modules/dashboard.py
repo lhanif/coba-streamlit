@@ -63,9 +63,9 @@ def run():
         st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
         st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
 
-    # Memanggil rerun setiap 10 detik
+    # Memanggil clear_cache setiap 10 detik untuk memperbarui tampilan
     time.sleep(10)  # Menunggu 10 detik sebelum refresh
-    st.experimental_rerun()  # Me-refresh aplikasi
+    st.legacy_caching.clear_cache()  # Memperbarui cache dan memicu pembaruan data
 
 if __name__ == "__main__":
     run()
