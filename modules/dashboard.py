@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
 from pymongo import MongoClient
+import time
 
 # Koneksi MongoDB
 MONGO_URI = "mongodb+srv://symbiot:horehore@sensor.hh6drjg.mongodb.net/"
@@ -24,7 +25,7 @@ def plot_graph(title, x, y, color):
     return fig
 
 def run():
-    st.markdown("<h1 style='text-align: center;'>DASHBOARD BOMBATRONIC 1</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>DASHBOARD BOMBATRONIC </h1>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
@@ -33,8 +34,8 @@ def run():
     with col2:
         st.markdown("<h3><b>Threat Level:</b> <span style='color: green;'>Safe</span></h3>", unsafe_allow_html=True)
 
-    # Tombol untuk refresh data
-    if st.button("Refresh Data"):
+    # Fungsi untuk merefresh data otomatis setiap 10 detik
+    while True:
         df = get_latest_data()
 
         if df.empty:
@@ -54,11 +55,15 @@ def run():
 
             col1, col2 = st.columns(2)
             col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
-            col2.plotly_chart(plot_graph("Humidity", x, y4, "black"), use_container_width=True)
+            col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True)
 
             # Menampilkan seluruh data dalam tabel
             st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
             st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
+
+        # Tunggu 10 detik sebelum merefresh
+        time.sleep(10)
+        st.experimental_rerun()
 
 if __name__ == "__main__":
     run()
