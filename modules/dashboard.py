@@ -37,35 +37,38 @@ def run():
     with col2:
         st.markdown("<h3><b>Threat Level:</b> <span style='color: green;'>Safe</span></h3>", unsafe_allow_html=True)
 
-    # Mengambil data terbaru
-    df = get_latest_data()
+    # Tempatkan konten ke dalam st.empty() untuk memungkinkan pembaruan otomatis
+    latest_data_placeholder = st.empty()
 
-    if df.empty:
-        st.warning("Belum ada data tersedia.")
-    else:
-        # Mengambil 10 titik terakhir pada grafik
-        x = df['timestamp'].dt.strftime("%H:%M:%S") if 'timestamp' in df.columns else list(range(len(df)))
-        y1 = df["CO"] if "CO" in df else [0]*len(x)
-        y2 = df["CO2"] if "CO2" in df else [0]*len(x)
-        y3 = df["temperature"] if "temperature" in df else [0]*len(x)
-        y4 = df["humidity"] if "humidity" in df else [0]*len(x)
+    while True:
+        df = get_latest_data()
 
-        # Menampilkan grafik dengan 10 data terakhir
-        col1, col2 = st.columns(2)
-        col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True)
-        col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True)
+        if df.empty:
+            latest_data_placeholder.warning("Belum ada data tersedia.")
+        else:
+            # Mengambil 10 titik terakhir pada grafik
+            x = df['timestamp'].dt.strftime("%H:%M:%S") if 'timestamp' in df.columns else list(range(len(df)))
+            y1 = df["CO"] if "CO" in df else [0]*len(x)
+            y2 = df["CO2"] if "CO2" in df else [0]*len(x)
+            y3 = df["temperature"] if "temperature" in df else [0]*len(x)
+            y4 = df["humidity"] if "humidity" in df else [0]*len(x)
 
-        col1, col2 = st.columns(2)
-        col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
-        col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True)
+            # Menampilkan grafik dengan 10 data terakhir
+            col1, col2 = st.columns(2)
+            col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True)
+            col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True)
 
-        # Menampilkan seluruh data dalam tabel
-        st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
-        st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
+            col1, col2 = st.columns(2)
+            col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
+            col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True)
 
-    # Memanggil clear_cache setiap 10 detik untuk memperbarui tampilan
-    time.sleep(10)  # Menunggu 10 detik sebelum refresh
-    st.legacy_caching.clear_cache()  # Memperbarui cache dan memicu pembaruan data
+            # Menampilkan seluruh data dalam tabel
+            st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
+            st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
+
+        # Memperbarui data setiap 10 detik
+        time.sleep(10)
+        latest_data_placeholder.empty()  # Menghapus konten sebelumnya untuk menampilkan data baru
 
 if __name__ == "__main__":
     run()
