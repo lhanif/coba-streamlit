@@ -16,6 +16,7 @@ menu = {
 
 # Baca halaman dari query params
 query_params = st.query_params
+st.write(query_params)
 current_page = query_params.get("page", "dashboard")
 
 def switch_page(page):
