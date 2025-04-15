@@ -14,6 +14,7 @@ def get_latest_data(limit=5):
     cursor = collection.find().sort("timestamp", -1).limit(limit)
     df = pd.DataFrame(cursor)
     if not df.empty and "timestamp" in df.columns:
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")  # ✅ Konversi timestamp
         df = df.sort_values("timestamp")
     return df
 
