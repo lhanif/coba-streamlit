@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
 from pymongo import MongoClient
-from datetime import datetime
 import time
 
 # Koneksi MongoDB
@@ -35,33 +34,37 @@ def run():
     with col2:
         st.markdown("<h3><b>Threat Level:</b> <span style='color: green;'>Safe</span></h3>", unsafe_allow_html=True)
 
-    df = get_latest_data()
+    placeholder = st.empty()  # Placeholder to update content
 
-    if df.empty:
-        st.warning("Belum ada data tersedia.")
-        return
+    while True:
+        df = get_latest_data()
 
-    x = df['timestamp'].dt.strftime("%H:%M:%S") if 'timestamp' in df.columns else list(range(len(df)))
-    y1 = df["CO"] if "CO" in df else [0]*len(x)
-    y2 = df["CO2"] if "CO2" in df else [0]*len(x)
-    y3 = df["temperature"] if "temperature" in df else [0]*len(x)
-    y4 = df["humidity"] if "humidity" in df else [0]*len(x)
+        if df.empty:
+            st.warning("Belum ada data tersedia.")
+            break
 
-    col1, col2 = st.columns(2)
-    col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True)
-    col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True)
+        x = df['timestamp'].dt.strftime("%H:%M:%S") if 'timestamp' in df.columns else list(range(len(df)))
+        y1 = df["CO"] if "CO" in df else [0]*len(x)
+        y2 = df["CO2"] if "CO2" in df else [0]*len(x)
+        y3 = df["temperature"] if "temperature" in df else [0]*len(x)
+        y4 = df["humidity"] if "humidity" in df else [0]*len(x)
 
-    col1, col2 = st.columns(2)
-    col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
-    col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True)
+        # Gunakan placeholder untuk mengganti konten setelah 10 detik
+        with placeholder.container():
+            col1, col2 = st.columns(2)
+            col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True)
+            col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True)
 
-    st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
-    cols_to_show = [col for col in ["CO", "CO2", "temperature", "humidity", "timestamp"] if col in df.columns]
-    st.dataframe(df[cols_to_show])
+            col1, col2 = st.columns(2)
+            col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
+            col2.plotly_chart(plot_graph("Humidity", x, y4, "black"), use_container_width=True)
 
-    # Auto-refresh setelah 10 detik
-    time.sleep(10)
-    st.experimental_rerun()
+            st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
+            cols_to_show = [col for col in ["CO", "CO2", "temperature", "humidity", "timestamp"] if col in df.columns]
+            st.dataframe(df[cols_to_show])
+
+        time.sleep(10)  # Delay before next update
+        placeholder.empty()  # Clear the placeholder for next update
 
 if __name__ == "__main__":
     run()
