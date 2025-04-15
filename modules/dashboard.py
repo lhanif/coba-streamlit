@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
 from pymongo import MongoClient
+import time
 
 # Koneksi MongoDB
 MONGO_URI = "mongodb+srv://symbiot:horehore@sensor.hh6drjg.mongodb.net/"
@@ -62,8 +63,9 @@ def run():
         st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
         st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
 
-    # Otomatis refresh setiap 10 detik
-    st.autorefresh(interval=10000)  # 10 detik = 10000 ms
+    # Memanggil rerun setiap 10 detik
+    time.sleep(10)  # Menunggu 10 detik sebelum refresh
+    st.experimental_rerun()  # Me-refresh aplikasi
 
 if __name__ == "__main__":
     run()
