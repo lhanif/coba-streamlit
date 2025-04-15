@@ -53,7 +53,7 @@ def run():
 
     col1, col2 = st.columns(2)
     col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
-    col2.plotly_chart(plot_graph("Humidity", x, y4, "black"), use_container_width=True)
+    col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True)
 
     st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
     cols_to_show = [col for col in ["CO", "CO2", "temperature", "humidity", "timestamp"] if col in df.columns]
