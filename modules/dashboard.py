@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
 from pymongo import MongoClient
-import time
 
 # Koneksi MongoDB
 MONGO_URI = "mongodb+srv://symbiot:horehore@sensor.hh6drjg.mongodb.net/"
@@ -37,17 +36,12 @@ def run():
     with col2:
         st.markdown("<h3><b>Threat Level:</b> <span style='color: green;'>Safe</span></h3>", unsafe_allow_html=True)
 
-    # Tempatkan konten ke dalam st.empty() untuk memungkinkan pembaruan otomatis
-    latest_data_placeholder = st.empty()
-
-    # Membuat tempat kosong untuk grafik
-    graph_placeholder = st.empty()
-
-    while True:
+    # Tombol untuk refresh data
+    if st.button("Refresh Data", key="refresh_button", help="Klik untuk refresh data", use_container_width=True):
         df = get_latest_data()
 
         if df.empty:
-            latest_data_placeholder.warning("Belum ada data tersedia.")
+            st.warning("Belum ada data tersedia.")
         else:
             # Mengambil 10 titik terakhir pada grafik
             x = df['timestamp'].dt.strftime("%H:%M:%S") if 'timestamp' in df.columns else list(range(len(df)))
@@ -55,9 +49,6 @@ def run():
             y2 = df["CO2"] if "CO2" in df else [0]*len(x)
             y3 = df["temperature"] if "temperature" in df else [0]*len(x)
             y4 = df["humidity"] if "humidity" in df else [0]*len(x)
-
-            # Membersihkan placeholder sebelumnya
-            graph_placeholder.empty()
 
             # Menampilkan grafik dengan 10 data terakhir
             col1, col2 = st.columns(2)
@@ -72,9 +63,19 @@ def run():
             st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
             st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
 
-        # Memperbarui data setiap 10 detik
-        time.sleep(10)
-        latest_data_placeholder.empty()  # Menghapus konten sebelumnya untuk menampilkan data baru
+# Styling untuk tombol Refresh
+st.markdown("""
+    <style>
+    .stButton>button {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+        padding: 12px 30px;
+        border-radius: 5px;
+        border: none;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     run()
