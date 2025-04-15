@@ -32,7 +32,7 @@ def run():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
-    user_input = st.chat_input("Tanyakan sesuatu ke Gemini...")
+    user_input = st.chat_input("Tanyakan sesuatu ke BombaBot...")
 
     if user_input:
         st.session_state.chat_history.append(("user", user_input))
