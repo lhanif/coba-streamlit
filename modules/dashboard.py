@@ -67,13 +67,17 @@ def run():
 st.markdown("""
     <style>
     .stButton>button {
-        font-color : white;
         background-color: red;
         color: white;
         font-weight: bold;
         padding: 12px 30px;
         border-radius: 5px;
         border: none;
+        transition: background-color 0.3s;
+    }
+
+    .stButton>button:hover {
+        background-color: darkred;
     }
     </style>
 """, unsafe_allow_html=True)
