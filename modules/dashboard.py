@@ -5,7 +5,7 @@ from pymongo import MongoClient
 import time
 
 # Koneksi MongoDB
-MONGO_URI = "mongodb+srv://symbiot:<db_password>@sensor.hh6drjg.mongodb.net/"
+MONGO_URI = "mongodb+srv://symbiot:horehore@sensor.hh6drjg.mongodb.net/"
 client = MongoClient(MONGO_URI)
 db = client["sensor"]
 collection = db["data_sensor"]
