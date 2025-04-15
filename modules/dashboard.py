@@ -28,7 +28,7 @@ def plot_graph(title, x, y, color):
 
 # Fungsi utama untuk menjalankan dashboard
 def run():
-    st.markdown("<h1 style='text-align: center;'>DASHBOARD BOMBATRONIC 1</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>DASHBOARD BOMBATRONIC </h1>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
@@ -55,12 +55,12 @@ def run():
 
             # Menampilkan grafik dengan 10 data terakhir dan memberikan key yang unik
             col1, col2 = st.columns(2)
-            col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True, key="co_graph")
-            col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True, key="co2_graph")
+            col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True, key=f"co_graph_{int(time.time())}")
+            col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True, key=f"co2_graph_{int(time.time())}")
 
             col1, col2 = st.columns(2)
-            col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True, key="temperature_graph")
-            col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True, key="humidity_graph")
+            col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True, key=f"temperature_graph_{int(time.time())}")
+            col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True, key=f"humidity_graph_{int(time.time())}")
 
             # Menampilkan seluruh data dalam tabel
             st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
