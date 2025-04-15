@@ -67,6 +67,7 @@ def run():
 st.markdown("""
     <style>
     .stButton>button {
+        font-color : white;
         background-color: red;
         color: white;
         font-weight: bold;
