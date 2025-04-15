@@ -59,7 +59,8 @@ def run():
             col2.plotly_chart(plot_graph("Humidity", x, y4, "black"), use_container_width=True)
 
             st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
-            st.dataframe(df[["CO", "CO2", "Temperature", "Humidity", "timestamp"]])
+            cols_to_show = [col for col in ["CO", "CO2", "Temperature", "Humidity", "timestamp"] if col in df.columns]
+            st.dataframe(df[cols_to_show])
 
         time.sleep(10)
         placeholder.empty()
