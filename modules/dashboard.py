@@ -40,6 +40,9 @@ def run():
     # Tempatkan konten ke dalam st.empty() untuk memungkinkan pembaruan otomatis
     latest_data_placeholder = st.empty()
 
+    # Membuat tempat kosong untuk grafik
+    graph_placeholder = st.empty()
+
     while True:
         df = get_latest_data()
 
@@ -53,14 +56,17 @@ def run():
             y3 = df["temperature"] if "temperature" in df else [0]*len(x)
             y4 = df["humidity"] if "humidity" in df else [0]*len(x)
 
-            # Menampilkan grafik dengan 10 data terakhir dan memberikan key yang unik
+            # Membersihkan placeholder sebelumnya
+            graph_placeholder.empty()
+
+            # Menampilkan grafik dengan 10 data terakhir
             col1, col2 = st.columns(2)
-            col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True, key=f"co_graph_{int(time.time())}")
-            col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True, key=f"co2_graph_{int(time.time())}")
+            col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True)
+            col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True)
 
             col1, col2 = st.columns(2)
-            col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True, key=f"temperature_graph_{int(time.time())}")
-            col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True, key=f"humidity_graph_{int(time.time())}")
+            col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
+            col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True)
 
             # Menampilkan seluruh data dalam tabel
             st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
