@@ -28,7 +28,7 @@ def plot_graph(title, x, y, color):
 
 # Fungsi utama untuk menjalankan dashboard
 def run():
-    st.markdown("<h1 style='text-align: center;'>DASHBOARD BOMBATRONIC </h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>DASHBOARD BOMBATRONIC 1</h1>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     col1, col2 = st.columns(2)
