@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
 from pymongo import MongoClient
-import time
 
 # Koneksi MongoDB
 MONGO_URI = "mongodb+srv://symbiot:horehore@sensor.hh6drjg.mongodb.net/"
@@ -34,12 +33,8 @@ def run():
     with col2:
         st.markdown("<h3><b>Threat Level:</b> <span style='color: green;'>Safe</span></h3>", unsafe_allow_html=True)
 
-    placeholder = st.empty()  # Placeholder to update content
-
-    # Menambahkan tombol Refresh
-    refresh_button = st.button("Refresh Data")
-
-    if refresh_button:
+    # Tombol untuk refresh data
+    if st.button("Refresh Data"):
         df = get_latest_data()
 
         if df.empty:
@@ -52,19 +47,18 @@ def run():
             y3 = df["temperature"] if "temperature" in df else [0]*len(x)
             y4 = df["humidity"] if "humidity" in df else [0]*len(x)
 
-            # Gunakan placeholder untuk mengganti konten setelah tombol ditekan
-            with placeholder.container():
-                col1, col2 = st.columns(2)
-                col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True)
-                col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True)
+            # Menampilkan grafik dengan 10 data terakhir
+            col1, col2 = st.columns(2)
+            col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True)
+            col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True)
 
-                col1, col2 = st.columns(2)
-                col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
-                col2.plotly_chart(plot_graph("Humidity", x, y4, "black"), use_container_width=True)
+            col1, col2 = st.columns(2)
+            col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
+            col2.plotly_chart(plot_graph("Humidity", x, y4, "black"), use_container_width=True)
 
-                st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
-                # Menampilkan seluruh data dalam tabel
-                st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
+            # Menampilkan seluruh data dalam tabel
+            st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
+            st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
 
 if __name__ == "__main__":
     run()
