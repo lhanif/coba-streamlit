@@ -10,7 +10,7 @@ client = MongoClient(MONGO_URI)
 db = client["sensor"]
 collection = db["data_sensor"]
 
-def get_latest_data(limit=5):
+def get_latest_data(limit=10):
     cursor = collection.find().sort("timestamp", -1).limit(limit)
     df = pd.DataFrame(cursor)
     if not df.empty and "timestamp" in df.columns:
@@ -43,6 +43,7 @@ def run():
             st.warning("Belum ada data tersedia.")
             break
 
+        # Mengambil 10 titik terakhir pada grafik
         x = df['timestamp'].dt.strftime("%H:%M:%S") if 'timestamp' in df.columns else list(range(len(df)))
         y1 = df["CO"] if "CO" in df else [0]*len(x)
         y2 = df["CO2"] if "CO2" in df else [0]*len(x)
@@ -60,8 +61,8 @@ def run():
             col2.plotly_chart(plot_graph("Humidity", x, y4, "black"), use_container_width=True)
 
             st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
-            cols_to_show = [col for col in ["CO", "CO2", "temperature", "humidity", "timestamp"] if col in df.columns]
-            st.dataframe(df[cols_to_show])
+            # Menampilkan seluruh data dalam tabel
+            st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
 
         time.sleep(10)  # Delay before next update
         placeholder.empty()  # Clear the placeholder for next update
