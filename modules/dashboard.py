@@ -13,9 +13,10 @@ collection = db["data_sensor"]
 def get_latest_data(limit=10):
     cursor = collection.find().sort("timestamp", -1).limit(limit)
     df = pd.DataFrame(cursor)
-    if not df.empty and "timestamp" in df.columns:
-        df["timestamp"] = pd.to_datetime(df["timestamp"])  # Pastikan tipe datetime
-        df = df.sort_values("timestamp")
+    if not df.empty:
+        if "timestamp" in df.columns:
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
+            df = df.sort_values("timestamp")
     return df
 
 # Fungsi untuk membuat grafik
@@ -30,11 +31,21 @@ def run():
     st.markdown("<h1 style='text-align: center;'>DASHBOARD BOMBATRONIC </h1>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
+    df = get_latest_data()
+
+    latest_status = "0"
+    if not df.empty and "status" in df.columns:
+        latest_status = str(df["status"].iloc[-1])
+
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("<h3><b>System Status:</b> <span style='color: green;'>On</span></h3>", unsafe_allow_html=True)
     with col2:
-        st.markdown("<h3><b>Threat Level:</b> <span style='color: green;'>Safe</span></h3>", unsafe_allow_html=True)
+        if latest_status == "1":
+            fire_html = "<h3><b>Fire Detected:</b> <span style='color: red;'>On</span></h3>"
+        else:
+            fire_html = "<h3><b>Fire Detected:</b> <span style='color: green;'>Off</span></h3>"
+        st.markdown(fire_html, unsafe_allow_html=True)
 
     # Tombol untuk refresh data
     if st.button("Refresh Data", key="refresh_button", help="Klik untuk refresh data", use_container_width=True):
@@ -43,25 +54,22 @@ def run():
         if df.empty:
             st.warning("Belum ada data tersedia.")
         else:
-            # Mengambil 10 titik terakhir pada grafik
             x = df['timestamp'].dt.strftime("%H:%M:%S") if 'timestamp' in df.columns else list(range(len(df)))
-            y1 = df["CO"] if "CO" in df else [0]*len(x)
-            y2 = df["CO2"] if "CO2" in df else [0]*len(x)
-            y3 = df["temperature"] if "temperature" in df else [0]*len(x)
-            y4 = df["humidity"] if "humidity" in df else [0]*len(x)
+            y1 = df["MQ7"] if "MQ7" in df else [0]*len(x)
+            y2 = df["MQ135"] if "MQ135" in df else [0]*len(x)
+            y3 = df["Temp"] if "Temp" in df else [0]*len(x)
+            y4 = df["Hum"] if "Hum" in df else [0]*len(x)
 
-            # Menampilkan grafik dengan 10 data terakhir
             col1, col2 = st.columns(2)
-            col1.plotly_chart(plot_graph("CO", x, y1, "blue"), use_container_width=True)
-            col2.plotly_chart(plot_graph("CO2", x, y2, "orange"), use_container_width=True)
+            col1.plotly_chart(plot_graph("CO (MQ7)", x, y1, "blue"), use_container_width=True)
+            col2.plotly_chart(plot_graph("CO2 (MQ135)", x, y2, "orange"), use_container_width=True)
 
             col1, col2 = st.columns(2)
             col1.plotly_chart(plot_graph("Temperature", x, y3, "green"), use_container_width=True)
             col2.plotly_chart(plot_graph("Humidity", x, y4, "red"), use_container_width=True)
 
-            # Menampilkan seluruh data dalam tabel
             st.markdown("<h3>Recent Readings</h3>", unsafe_allow_html=True)
-            st.dataframe(df[["CO", "CO2", "temperature", "humidity", "timestamp"]])
+            st.dataframe(df[["MQ7", "MQ135", "Temp", "Hum", "status", "timestamp"]])
 
 # Styling untuk tombol Refresh
 st.markdown("""
