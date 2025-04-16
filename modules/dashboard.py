@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
 from pymongo import MongoClient
+from datetime import datetime
 
 # Koneksi MongoDB
 MONGO_URI = "mongodb+srv://symbiot:horehore@sensor.hh6drjg.mongodb.net/"
@@ -10,13 +11,22 @@ db = client["sensor"]
 collection = db["data_sensor"]
 
 # Fungsi untuk mengambil data terbaru dari MongoDB
+
 def get_latest_data(limit=10):
-    cursor = collection.find().sort("timestamp", -1).limit(limit)
+    cursor = collection.find().sort("_id", -1).limit(limit)
     df = pd.DataFrame(cursor)
-    if not df.empty:
-        if "timestamp" in df.columns:
-            df["timestamp"] = pd.to_datetime(df["timestamp"])
-            df = df.sort_values("timestamp")
+
+    # Jika belum ada kolom 'timestamp', buat dari _id (ObjectId mengandung waktu)
+    if "timestamp" not in df.columns:
+        if "_id" in df.columns:
+            df["timestamp"] = df["_id"].apply(lambda x: x.generation_time)
+        else:
+            df["timestamp"] = datetime.utcnow()
+
+    # Ubah ke datetime dan urutkan
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = df.sort_values("timestamp")
+
     return df
 
 # Fungsi untuk membuat grafik
