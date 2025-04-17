@@ -4,8 +4,8 @@ import numpy as np
 import urllib.request
 import time
 
-# Auto-refresh every 100 ms (0.1 detik)
-st.experimental_set_query_params(t=str(time.time()))
+# Refresh param untuk memicu rerun tanpa while loop
+st.query_params["t"] = str(time.time())
 
 st.title("Camera Snapshot Viewer")
 
@@ -32,11 +32,11 @@ with col2:
     if not st.session_state.camera_active:
         if st.button("Start Snapshot Stream"):
             st.session_state.camera_active = True
-            st.experimental_rerun()
+            st.rerun()
     else:
         if st.button("Stop Snapshot Stream"):
             st.session_state.camera_active = False
-            st.experimental_rerun()
+            st.rerun()
 
 if st.session_state.camera_active:
     outer_col1, outer_col2, outer_col3 = st.columns([1, 2, 1])
@@ -51,5 +51,6 @@ if st.session_state.camera_active:
         except Exception as e:
             st.error(f"Gagal mengambil gambar: {e}")
 
-    # Auto-refresh tiap 100 ms
-    st.experimental_rerun()
+    # Rerun otomatis tiap 0.2 detik
+    time.sleep(0.2)
+    st.rerun()
