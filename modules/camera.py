@@ -7,7 +7,7 @@ import time
 def run():
     st.title("Camera Streaming")
 
-    ip_snapshot_url = st.text_input("IP Camera Snapshot URL", "https://d0ae-2404-c0-9aa0-00-20c8-2c.ngrok-free.app/cam-hi.jpg"
+    ip_snapshot_url = st.text_input("IP Camera Snapshot URL", "https://d0ae-2404-c0-9aa0-00-20c8-2c.ngrok-free.app/cam-hi.jpg")
     if "camera_active" not in st.session_state:
         st.session_state.camera_active = False
 
